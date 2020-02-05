@@ -5,7 +5,7 @@ import ComposeSaladModal from './ComposeSaladModal';
 import ViewOrder from './ViewOrder';
 import { Order, Salad } from './salad.js';
 import Container from 'react-bootstrap/Container';
-import logo from "./pepe.png";
+//import logo from "./pepe.png";
 
 
 
@@ -38,7 +38,6 @@ class App extends Component {
         <Container fluid>
           <ComposeSaladModal inventory={inventory} submitSalad={this.outputSalad} />
           <ViewOrder order={this.state.order} />
-          <img src={logo} class="img-fluid" alt="pepe"></img>
         </Container>
         </React.Fragment>
     );

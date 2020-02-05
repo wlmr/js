@@ -1,5 +1,7 @@
 'use strict'; 
+
 const imported = require("./inventory.js"); 
+const inventory = imported.inventory;
 
 const keys = Object.keys(imported.inventory);
 
@@ -14,27 +16,27 @@ console.log("Extras: " + extras);
 console.log("Dressings: " + dressings);
 
 class Salad {
-    constructor(f,p,e,d){
-        this.f = f ? {f: imported.inventory[f]} : {};
-        this.p = p ? (Array.isArray(p) ? p : [p]) : [{}]; 
-        this.e = e ? (Array.isArray(e) ? e : [e]) : [{}];
-        this.d = d ? {d: inventory[d]} : {};
+    constructor(){
+        this.f = {};
+        this.p = {};
+        this.e = {};
+        this.d = {};
     }
 
     addFoundation(i) {
-        this.f = {i: inventory[i]};
+        this.f = {[i] : inventory[i]};
     }
 
     addProtein(i) {
-        this.p = {...this.p, i: inventory[i]};
+        this.p = {...this.p, [i]: inventory[i]};
     }
 
     addExtra(i) {        
-        this.e = {...this.e, i: inventory[i]};
+        this.e = {...this.e, [i]: inventory[i]};
     }
 
     addDressing(i) {
-        this.d = {i: inventory[i]};
+        this.d = {[i] : inventory[i]};
     }
 
     removeFoundation() {
@@ -61,97 +63,93 @@ class Salad {
 }
 
 class ExtraGreenSalad extends Salad {
-    constructor(f,p,e,d) {
-        super(f,p,e,d);
-    }
 
     price() {
-        const disc = (prop => prop === 'f' ? 1.3 : 0.5)
+        const disc = (prop => prop === 'f' ? 1.3 : 0.5);
         return Object.keys(this).reduce((acc, prop) => 
-            acc + disc(prop) * this[prop].reduce((acc, i) => 
-                    acc + imported.inventory[i].price, 0), 0);            
+                    acc + Object.keys(this[prop]).reduce((acc, i) => 
+                    acc + disc(prop) * this[prop][i].price, 0), 0);
     }
 }
-
 
 class GourmetSalad extends Salad {
-    
-    constructor(f,p,e,d) {
-        super(f,p,e,d);
+
+    addProtein(i, s) {
+        let item = {...inventory[i], size:s};
+        this.p = {[i] : item};
     }
 
-    addFoundation(i,s) {
-        this.f = [{ingredient: i, size: s}];
+    addFoundation(i, s) {
+        let item = {...inventory[i], size:s};
+        this.f = {[i] : item};
     }
 
-    addProtein(i,s) {
-        this.p.push({ingredient: i, size: s});
+    addDressing(i, s) {
+        let item = {...inventory[i], size:s};
+        this.d = {...this.d, [i]: item};
     }
 
-    addExtra(i,s) {
-        this.e.push({ingredient: i, size: s});
+    addExtra(i, s) {
+        let item = {...inventory[i], size:s};
+        this.e = {...this.e, [i]: item};
     }
-
-    addDressing(i,s) {
-        this.d = [{ingredient: i, size: s}];
-    }
-
-
-    removeProtein(i) {
-        this.p = this.p.filter((x) => x.ingredient !== i);
-    }
-
-    removeExtra(i) {
-        this.e = this.e.filter((x) => x.ingredient !== i);
-    }
-
 
     price() {
         return Object.keys(this).reduce((acc, prop) => 
-            acc + this[prop].reduce((acc, i) => 
-                    acc + i.size * imported.inventory[i.ingredient].price, 0), 0);            
+                    acc + Object.keys(this[prop]).reduce((acc, i) => 
+                    acc + this[prop][i].size* this[prop][i].price, 0), 0);
     }
 }
 
+let s = new ExtraGreenSalad();
+s.addFoundation('Salad + Pasta');
+s.addProtein('Kycklingfilé');
+s.addExtra('Avocado');
+s.addExtra('Paprika');
+s.addDressing('Rhodeisland');
+console.log(s);
+console.log(s.price());
 
-let myCeasarSalad = new Salad();
-myCeasarSalad.addFoundation('Salad + Pasta');
-myCeasarSalad.addProtein('Kycklingfilé');
-myCeasarSalad.addExtra('Krutonger');
-myCeasarSalad.addExtra('Jalapeno');
-myCeasarSalad.addDressing('Ceasardressing');
-myCeasarSalad.removeExtra('Jalapeno');
+let myceasarsalad = new Salad();
+myceasarsalad.addFoundation('Salad + Pasta');
+myceasarsalad.addProtein('Kycklingfilé');
+myceasarsalad.addExtra('Krutonger');
+myceasarsalad.addExtra('Jalapeno');
+myceasarsalad.addDressing('Ceasardressing');
+myceasarsalad.removeExtra('Jalapeno');
 
-let myEGS = new ExtraGreenSalad();
-myEGS.addFoundation('Salad + Pasta');
-myEGS.addProtein('Kycklingfilé');
-myEGS.addExtra('Krutonger');
-myEGS.addExtra('Jalapeno');
-myEGS.addDressing('Ceasardressing');
-myEGS.removeExtra('Jalapeno');
-console.log(myCeasarSalad);
-console.log(myCeasarSalad.price());
+let myegs = new ExtraGreenSalad();
+myegs.addFoundation('Salad + Pasta');
+myegs.addProtein('Kycklingfilé');
+myegs.addExtra('Krutonger');
+myegs.addExtra('Jalapeno');
+myegs.addDressing('Ceasardressing');
+myegs.removeExtra('Jalapeno');
+console.log(myceasarsalad);
+console.log(myceasarsalad.price());
 
-let gSalad = new GourmetSalad();
-gSalad.addFoundation("Pasta", 3);
-gSalad.addProtein('Handskalade räkor från Smögen', 5);
-console.log(gSalad.price());
+let gsalad = new GourmetSalad();
+gsalad.addFoundation("Pasta", 3);
+gsalad.addProtein('Handskalade räkor från Smögen', 5);
+gsalad.addExtra('Krutonger', 0.5);
+gsalad.addDressing('Rhodeisland', 10);
+console.log(gsalad.price());
 
 
 
 //9. 
-// 1. mySalad -> 2. ExtraGreenSallad -> 3. Sallad -> 4. Object.prototype -> 5. null. 
+// 1. mysalad -> 2. extragreensallad -> 3. sallad -> 4. object.prototype -> 5. null. 
 //
-// > Object.getPrototypeOf(myExtraGreenSallad);
-// ExtraGreenSallad {}
-// > Object.getPrototypeOf(Object.getPrototypeOf(myExtraGreenSallad));
-// Sallad {}
-// > Object.getPrototypeOf(Object.getPrototypeOf(Object.getPrototypeOf(myExtraGreenSallad)));
+// > object.getprototypeof(myextragreensallad);
+// extragreensallad {}
+// > object.getprototypeof(object.getprototypeof(myextragreensallad));
+// sallad {}
+// > object.getprototypeof(object.getprototypeof(object.getprototypeof(myextragreensallad)));
 // {}
-// > Object.getPrototypeOf(Object.getPrototypeOf(Object.getPrototypeOf(Object.getPrototypeOf(myExtraGreenSallad))));
+// > object.getprototypeof(object.getprototypeof(object.getprototypeof(object.getprototypeof(myextragreensallad))));
 // null
 
-let mySalad = new ExtraGreenSalad();
+let mysalad = new ExtraGreenSalad();
 
 
 
@@ -165,22 +163,22 @@ class Order {
         this.basket = [];
     }
 
-    addSalad(s) {
+    addsalad(s) {
         this.basket.push(s);
     }
 
-    removeSalad(s) {
+    removesalad(s) {
         this.basket = this.basket.filter(x => x !== s);
     }
 
-    totalPrice() {
+    totalprice() {
         return this.basket.reduce((acc,curr) => acc + curr.price(),0);
     }
 }
 
 
 let order = new Order();
-order.addSalad(myCeasarSalad);
-order.addSalad(myEGS);
-order.addSalad(gSalad);
-console.log("Total price of order: " + order.totalPrice());
+order.addsalad(myceasarsalad);
+order.addsalad(myegs);
+order.addsalad(gsalad);
+console.log("total price of order: " + order.totalprice());

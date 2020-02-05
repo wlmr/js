@@ -14,9 +14,9 @@ class ViewOrder extends Component {
                 <h4>Din beställning</h4>
                 <ListGroup action="true">
                     {this.state.order.basket.map((s, index) => (
-                        <li class="list-group-item d-flex justify-content-between align-items-center" key={"order" + index}>
+                        <li className="list-group-item d-flex justify-content-between align-items-center" key={"order" + index}>
                             {(index + 1) + ": " + s.toString()}
-                            <span class="badge badge-primary badge-pill">{s.price() + " kr"}</span>
+                            <span className="badge badge-primary badge-pill">{s.price() + " kr"}</span>
                         </li>))}
                 </ListGroup>
             </Container>
