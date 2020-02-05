@@ -46,9 +46,9 @@ export class Salad {
                     acc + inventory[i].price, 0), 0);
     }
 
-    /* toString() {
-        return Object.keys(this).map(k => )
-    } */
+    toString() {
+        return Object.keys(this.f) + "," + Object.keys(this.p) + "," + Object.keys(this.e) + "," + Object.keys(this.d);
+    } 
 }
 
 let test = new Salad();
