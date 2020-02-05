@@ -32,7 +32,7 @@ class App extends Component {
     return (
       <React.Fragment>
         <div className="jumbotron text-center">
-          <h1>Aloha Snackbar&#129313;</h1>
+          <h1>зеленый и вкусный&#129313;</h1>
           <p>Here you can order custom made salads!</p>
         </div>
         <Container fluid>
