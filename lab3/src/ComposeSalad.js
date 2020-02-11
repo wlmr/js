@@ -7,17 +7,18 @@ import Button from 'react-bootstrap/Button';
 
 function SingleSaladSection(props) {
   return (
-    <Form.Group>
-      <Form.Label>Välj {props.name}</Form.Label>
-      <Form.Control required as="select" onChange={props.onChange}>
-      <option value="" ></option>
+    <div className="form-group">
+      <label> Välj {props.name}</label>
+      <select className="custom-select" required onChange={props.onChange}>
+        <option value="" >make a choice...</option>
         {props.values.map(i => (
           <option key={i} value={i}>
             {i + " +" + props.inventory[i].price + "kr"}
-          </option>))}
-      </Form.Control>
+          </option>
+        ))}
+      </select>
       <div className="invalid-feedback">required, select one</div>
-    </Form.Group>
+    </div>
   );
 }
 
@@ -74,9 +75,10 @@ class ComposeSalad extends Component {
   handleSubmit = e => {
     e.preventDefault();
     e.target.classList.add("was-validated");
-    this.setState({ salad: new Salad() });
-    this.props.handleSubmit(this.state.salad);
-    
+    if(event.target.checkValidity()){
+      this.setState({ salad: new Salad() });
+      this.props.handleSubmit(this.state.salad);
+    }
   }
 
 
@@ -89,15 +91,13 @@ class ComposeSalad extends Component {
     const dressings = Object.keys(inventory).filter(name => inventory[name].dressing);
 
     return (
-      <Form onSubmit={this.handleSubmit} novalidate>
+      <form className="needs-validation" onSubmit={this.handleSubmit} noValidate>
         <SingleSaladSection name="bas"        values={foundations}  inventory={inventory} onChange={this.updateFoundation} />
         <MultiSaladSection  name="proteiner"  values={proteins}     inventory={inventory} onChange={this.updateProteins} />
         <MultiSaladSection  name="extras"     values={extras}       inventory={inventory} onChange={this.updateExtras} />
         <SingleSaladSection name="dressing"   values={dressings}    inventory={inventory} onChange={this.updateDressing} />
-        <Button variant="primary" type="submit">
-          Skapa Sallad
-        </Button>
-      </Form>
+        <Button variant="primary" type="submit">Skapa Sallad</Button>
+      </form>
     );
   }
 }
