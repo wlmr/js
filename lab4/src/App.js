@@ -49,7 +49,7 @@ class App extends Component {
           <p>Here you can order custom made salads!</p>
         </div>
         <Container fluid>
-          <ComposeSaladModal inventory={this.inventory} submitSalad={this.outputSalad} />
+          <ComposeSaladModal inventory={this.state.inventory} submitSalad={this.outputSalad} />
           <ViewOrder order={this.state.order} />
         </Container>
         </React.Fragment>
