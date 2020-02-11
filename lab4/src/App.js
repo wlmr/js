@@ -7,7 +7,24 @@ import { Order, Salad } from './salad.js';
 import Container from 'react-bootstrap/Container';
 //import logo from "./pepe.png";
 
-const backendServer = `http://localhost:8080/`;
+const backendServer = "http://localhost:8080/";
+
+const options = {
+  method: 'GET'
+};
+
+async function fetchData(url) {
+  //console.log("fetching from " + url);
+  let response = await fetch(url, options);
+  if (response.error) {
+    throw new Error(response.error);
+  }
+  //console.log("parsing from " + url);
+  let data = await response.text();
+  //let data = await response.json();
+  
+  return JSON.parse(data);
+}
 
 async function buildInventory(inventory) {
   /** Asynchronously fetches the inventory from the backend and adds components to
@@ -15,7 +32,24 @@ async function buildInventory(inventory) {
    * 
    * 
    */
-  return;
+  let types = ['foundation', 'protein', 'extra', 'dressing'];
+  types.forEach(typeName => 
+    {
+      let typeUrl = backendServer + typeName + "s";
+      fetchData(typeUrl)
+      .then(typeItems => 
+        {
+          typeItems.forEach(typeItem => 
+            { 
+              let itemUrl = typeUrl + "/" + typeItem
+              fetchData(itemUrl).then(itemObject => 
+                {   
+                  inventory[typeItem] = itemObject;
+                });
+
+            });
+        });
+    });
 }
 
 class App extends Component {
@@ -25,8 +59,8 @@ class App extends Component {
     let o = new Order();
 
     //for testing
-    let s = new Salad('Salad + Quinoa','Marinerad bönmix','Avocado','Örtvinägrett');
-    o.addSalad(s);
+    //let s = new Salad('Salad + Quinoa','Marinerad bönmix','Avocado','Örtvinägrett');
+    //o.addSalad(s);
     //this.state = {order: o};
     this.state = {order: o, inventory: {}};
     buildInventory(this.state.inventory);
