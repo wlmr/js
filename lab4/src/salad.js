@@ -1,4 +1,11 @@
 
+let counterFunction = () => {
+    var counter = 1;
+    return _ => counter++;
+};
+
+let numberGen = counterFunction();
+
 export class Salad {
 
     constructor(){
@@ -9,26 +16,18 @@ export class Salad {
     }
 
     addFoundation(name, value) {
-        console.log("Added " + name);
-        console.log(value);
         this.f = {[name]: value};
     }
 
     addProtein(name, value) {
-        console.log("Added " + name);
-        console.log(value);
         this.p = {...this.p, [name]: value};
     }
 
     addExtra(name, value) {        
-        console.log("Added " + name);
-        console.log(value);
         this.e = {...this.e, [name]: value};
     }
 
     addDressing(name, value) {
-        console.log("Added " + name);
-        console.log(value);
         this.d = {[name]: value};
     }
 
@@ -61,11 +60,31 @@ export class Salad {
 
 export class Order {
     constructor() {
+        //window.localStorage.clear();
+        this.basket = [];
+        Object.keys(window.localStorage)
+        .sort()
+        .forEach(
+            name => {
+                let item = JSON.parse(window.localStorage.getItem(name));
+                Object.setPrototypeOf(item, Salad.prototype);
+                this.basket.push(item);
+                numberGen();
+            }
+        );
+    }
+
+
+    emptyOrders() {
+        window.localStorage.clear();
         this.basket = [];
     }
 
     addSalad(s) {
         this.basket.push(s);
+        const name = numberGen();
+        const stringified = JSON.stringify(s);
+        window.localStorage.setItem(name, stringified);
     }
 
     removeSalad(s) {

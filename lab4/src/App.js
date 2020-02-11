@@ -5,6 +5,9 @@ import ComposeSaladModal from './ComposeSaladModal';
 import ViewOrder from './ViewOrder';
 import { Order } from './salad.js';
 import Container from 'react-bootstrap/Container';
+import Button from 'react-bootstrap/Button';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 //import logo from "./pepe.png";
 
 const backendServer = "http://localhost:8080/";
@@ -70,6 +73,11 @@ class App extends Component {
     this.setState({ order: o });
   }
   
+  emptyOrders = () => {
+    this.state.order.emptyOrders();
+    this.forceUpdate();
+}
+
   render() {
     return (
       <React.Fragment>
@@ -78,7 +86,18 @@ class App extends Component {
           <p>Here you can order custom made salads!</p>
         </div>
         <Container fluid>
-          <ComposeSaladModal inventory={this.state.inventory} submitSalad={this.outputSalad} />
+          <Container >
+          <Row>
+            <Col>
+            <ComposeSaladModal inventory={this.state.inventory} submitSalad={this.outputSalad} />
+            </Col>
+            <Col>
+            <Button variant="primary" onClick={this.emptyOrders}>
+          Töm lista
+          </Button>
+            </Col>
+          </Row>
+          </Container>
           <ViewOrder order={this.state.order} />
         </Container>
         </React.Fragment>
