@@ -1,9 +1,9 @@
-//import inventory from './inventory.ES6';
+
 import React, { Component } from 'react';
 import './App.css';
 import ComposeSaladModal from './ComposeSaladModal';
 import ViewOrder from './ViewOrder';
-import { Order, Salad } from './salad.js';
+import { Order } from './salad.js';
 import Container from 'react-bootstrap/Container';
 //import logo from "./pepe.png";
 
@@ -57,11 +57,6 @@ class App extends Component {
   constructor(props) {
     super(props);
     let o = new Order();
-
-    //for testing
-    //let s = new Salad('Salad + Quinoa','Marinerad bönmix','Avocado','Örtvinägrett');
-    //o.addSalad(s);
-    //this.state = {order: o};
     this.state = {order: o, inventory: {}};
     buildInventory(this.state.inventory);
   }

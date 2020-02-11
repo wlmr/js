@@ -1,39 +1,47 @@
-import inventory from "./inventory.ES6"; 
 
 export class Salad {
-    constructor(f,p,e,d){
-        this.f = f && {[f]: true};
-        this.p = p && {[p]: true}; 
-        this.e = e && {[e]: true};
-        this.d = d && {[d]: true};
+
+    constructor(){
+        this.f = {};
+        this.p = {};
+        this.e = {};
+        this.d = {};
     }
 
-    addFoundation(i) {
-        this.f = {[i]: true};
+    addFoundation(name, value) {
+        console.log("Added " + name);
+        console.log(value);
+        this.f = {[name]: value};
     }
 
-    addProtein(i) {
-        this.p = {...this.p, [i]: true};
+    addProtein(name, value) {
+        console.log("Added " + name);
+        console.log(value);
+        this.p = {...this.p, [name]: value};
     }
 
-    addExtra(i) {        
-        this.e = {...this.e, [i]: true};
+    addExtra(name, value) {        
+        console.log("Added " + name);
+        console.log(value);
+        this.e = {...this.e, [name]: value};
     }
 
-    addDressing(i) {
-        this.d = {[i]: true};
+    addDressing(name, value) {
+        console.log("Added " + name);
+        console.log(value);
+        this.d = {[name]: value};
     }
 
     removeFoundation() {
         this.f = {};
     }
 
-    removeProtein(i) {
-        delete this.p[i];
+    removeProtein(name) {
+        delete this.p[name];
     }
 
-    removeExtra(i) {
-        delete this.e[i];    
+    removeExtra(name) {
+        delete this.e[name];    
     }
 
     removeDressing() {
@@ -42,21 +50,14 @@ export class Salad {
 
     price() {
         return Object.keys(this).reduce((acc, prop) => 
-                    acc + Object.keys(this[prop]).reduce((acc, i) => 
-                    acc + inventory[i].price, 0), 0);
+        acc + Object.keys(this[prop]).reduce((acc, i) => 
+        acc + this[prop][i].price, 0), 0);
     }
 
     toString() {
         return Object.keys(this.f) + "," + Object.keys(this.p) + "," + Object.keys(this.e) + "," + Object.keys(this.d);
     } 
 }
-
-let test = new Salad();
-test.addFoundation('Pasta');
-test.addProtein('Kycklingfilé');
-test.addExtra('Avocado');
-test.addDressing('Dillmayo');
-console.log(test.price());
 
 export class Order {
     constructor() {
