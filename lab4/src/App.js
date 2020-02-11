@@ -1,4 +1,4 @@
-import inventory from './inventory.ES6';
+//import inventory from './inventory.ES6';
 import React, { Component } from 'react';
 import './App.css';
 import ComposeSaladModal from './ComposeSaladModal';
@@ -7,7 +7,16 @@ import { Order, Salad } from './salad.js';
 import Container from 'react-bootstrap/Container';
 //import logo from "./pepe.png";
 
+const backendServer = `http://localhost:8080/`;
 
+async function buildInventory(inventory) {
+  /** Asynchronously fetches the inventory from the backend and adds components to
+   * the inventory object.
+   * 
+   * 
+   */
+  return;
+}
 
 class App extends Component {
 
@@ -18,8 +27,12 @@ class App extends Component {
     //for testing
     let s = new Salad('Salad + Quinoa','Marinerad bönmix','Avocado','Örtvinägrett');
     o.addSalad(s);
-    this.state = {order: o};
+    //this.state = {order: o};
+    this.state = {order: o, inventory: {}};
+    buildInventory(this.state.inventory);
   }
+
+
 
   outputSalad = s => {
     var o = this.state.order;
@@ -36,7 +49,7 @@ class App extends Component {
           <p>Here you can order custom made salads!</p>
         </div>
         <Container fluid>
-          <ComposeSaladModal inventory={inventory} submitSalad={this.outputSalad} />
+          <ComposeSaladModal inventory={this.inventory} submitSalad={this.outputSalad} />
           <ViewOrder order={this.state.order} />
         </Container>
         </React.Fragment>
