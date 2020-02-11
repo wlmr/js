@@ -5,17 +5,74 @@ import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
 
 
+const backendServer = "http://localhost:8080/";
+
+const options = {
+  method: 'GET'
+};
+
+async function fetchData(url) {
+  //console.log("fetching from " + url);
+  let response = await fetch(url, options);
+  if (response.error) {
+    throw new Error(response.error);
+  }
+  //console.log("parsing from " + url);
+  let data = await response.text();
+  //let data = await response.json();
+  
+  return JSON.parse(data);
+}
+
 
 class ComposeSaladModal extends Component {
   constructor(props) {
     super(props);
     this.state = {
       show: false,
+      inventoryFetched: false
     };
+    this.buildInventory();
   }
 
+
+  buildInventory() {
+    /** Asynchronously fetches the inventory from the backend and adds components to
+     * the inventory object.
+     * 
+     * 
+     */
+    let types = ['foundation', 'protein', 'extra', 'dressing'];
+    types.forEach(typeName => 
+      {
+        let typeUrl = backendServer + typeName + "s";
+        fetchData(typeUrl)
+        .then(typeItems => 
+          {
+            typeItems.forEach(typeItem => 
+              { 
+                let itemUrl = typeUrl + "/" + typeItem
+                fetchData(itemUrl).then(itemObject => 
+                  {   
+                    this.props.inventory[typeItem] = itemObject;
+                  });
+  
+              });
+          });
+      });
+      let newState = this.state;
+      newState.inventoryFetched = true;
+      this.setState(newState); 
+      
+  }
+
+
   handleClose = () => this.setState({ show: false });
-  handleShow = () => this.setState({ show: true });
+  handleShow = () => {
+    if(this.state.inventoryFetched) {
+      this.setState({ show: true })
+    }
+  };
 
   handleSubmit = s => {
     this.handleClose();
