@@ -8,8 +8,6 @@ import Container from 'react-bootstrap/Container';
 import Button from 'react-bootstrap/Button';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
-//import logo from "./pepe.png";
-
 
 
 class App extends Component {
@@ -18,7 +16,6 @@ class App extends Component {
     super(props);
     let o = new Order();
     this.state = {order: o, inventory: {}};
-    //buildInventory(this.state.inventory);
   }
 
 

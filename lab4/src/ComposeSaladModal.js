@@ -15,23 +15,27 @@ class ComposeSaladModal extends Component {
       show: false,
       inventoryFetched: false
     };
-    console.log(props.inventory);
   }
 
   componentDidMount() {
-    var callback = () => {
+    var postFetch = () => {
       let newState = {show: false, inventoryFetched: true};
       this.setState(newState);
+      console.log("Finished fetching inventory!");
     };
-    buildInventory(this.props.inventory, callback);
+    buildInventory(this.props.inventory, postFetch);
   }
 
 
+  handleClose = () => {
+    let newState = this.state;
+    newState.show = false;
+    this.setState(newState);
+  };
 
-  handleClose = () => this.setState({ show: false });
   handleShow = () => {
     if(this.state.inventoryFetched) {
-      this.setState({ show: true });
+      this.setState({ show: true, inventoryFetched: true });
     }
   };
 
