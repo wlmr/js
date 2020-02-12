@@ -1,39 +1,46 @@
-import inventory from "./inventory.ES6"; 
+
+let counterFunction = () => {
+    var counter = 1;
+    return _ => counter++;
+};
+
+let numberGen = counterFunction();
 
 export class Salad {
-    constructor(f,p,e,d){
-        this.f = f && {[f]: true};
-        this.p = p && {[p]: true}; 
-        this.e = e && {[e]: true};
-        this.d = d && {[d]: true};
+
+    constructor(){
+        this.f = {};
+        this.p = {};
+        this.e = {};
+        this.d = {};
     }
 
-    addFoundation(i) {
-        this.f = {[i]: true};
+    addFoundation(name, value) {
+        this.f = {[name]: value};
     }
 
-    addProtein(i) {
-        this.p = {...this.p, [i]: true};
+    addProtein(name, value) {
+        this.p = {...this.p, [name]: value};
     }
 
-    addExtra(i) {        
-        this.e = {...this.e, [i]: true};
+    addExtra(name, value) {        
+        this.e = {...this.e, [name]: value};
     }
 
-    addDressing(i) {
-        this.d = {[i]: true};
+    addDressing(name, value) {
+        this.d = {[name]: value};
     }
 
     removeFoundation() {
         this.f = {};
     }
 
-    removeProtein(i) {
-        delete this.p[i];
+    removeProtein(name) {
+        delete this.p[name];
     }
 
-    removeExtra(i) {
-        delete this.e[i];    
+    removeExtra(name) {
+        delete this.e[name];    
     }
 
     removeDressing() {
@@ -42,8 +49,8 @@ export class Salad {
 
     price() {
         return Object.keys(this).reduce((acc, prop) => 
-                    acc + Object.keys(this[prop]).reduce((acc, i) => 
-                    acc + inventory[i].price, 0), 0);
+        acc + Object.keys(this[prop]).reduce((acc, i) => 
+        acc + this[prop][i].price, 0), 0);
     }
 
     toString() {
@@ -51,20 +58,33 @@ export class Salad {
     } 
 }
 
-let test = new Salad();
-test.addFoundation('Pasta');
-test.addProtein('Kycklingfilé');
-test.addExtra('Avocado');
-test.addDressing('Dillmayo');
-console.log(test.price());
-
 export class Order {
     constructor() {
+        //window.localStorage.clear();
+        this.basket = [];
+        Object.keys(window.localStorage)
+        .sort()
+        .forEach(
+            name => {
+                let item = JSON.parse(window.localStorage.getItem(name));
+                Object.setPrototypeOf(item, Salad.prototype);
+                this.basket.push(item);
+                numberGen();
+            }
+        );
+    }
+
+
+    emptyOrders() {
+        window.localStorage.clear();
         this.basket = [];
     }
 
     addSalad(s) {
         this.basket.push(s);
+        const name = numberGen();
+        const stringified = JSON.stringify(s);
+        window.localStorage.setItem(name, stringified);
     }
 
     removeSalad(s) {

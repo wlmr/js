@@ -1,13 +1,33 @@
-//import inventory from './inventory.ES6';
+
 import React, { Component } from 'react';
 import './App.css';
 import ComposeSaladModal from './ComposeSaladModal';
 import ViewOrder from './ViewOrder';
-import { Order, Salad } from './salad.js';
+import { Order } from './salad.js';
 import Container from 'react-bootstrap/Container';
+import Button from 'react-bootstrap/Button';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 //import logo from "./pepe.png";
 
-const backendServer = `http://localhost:8080/`;
+const backendServer = "http://localhost:8080/";
+
+const options = {
+  method: 'GET'
+};
+
+async function fetchData(url) {
+  //console.log("fetching from " + url);
+  let response = await fetch(url, options);
+  if (response.error) {
+    throw new Error(response.error);
+  }
+  //console.log("parsing from " + url);
+  let data = await response.text();
+  //let data = await response.json();
+  
+  return JSON.parse(data);
+}
 
 async function buildInventory(inventory) {
   /** Asynchronously fetches the inventory from the backend and adds components to
@@ -15,7 +35,24 @@ async function buildInventory(inventory) {
    * 
    * 
    */
-  return;
+  let types = ['foundation', 'protein', 'extra', 'dressing'];
+  types.forEach(typeName => 
+    {
+      let typeUrl = backendServer + typeName + "s";
+      fetchData(typeUrl)
+      .then(typeItems => 
+        {
+          typeItems.forEach(typeItem => 
+            { 
+              let itemUrl = typeUrl + "/" + typeItem
+              fetchData(itemUrl).then(itemObject => 
+                {   
+                  inventory[typeItem] = itemObject;
+                });
+
+            });
+        });
+    });
 }
 
 class App extends Component {
@@ -23,11 +60,6 @@ class App extends Component {
   constructor(props) {
     super(props);
     let o = new Order();
-
-    //for testing
-    let s = new Salad('Salad + Quinoa','Marinerad bönmix','Avocado','Örtvinägrett');
-    o.addSalad(s);
-    //this.state = {order: o};
     this.state = {order: o, inventory: {}};
     buildInventory(this.state.inventory);
   }
@@ -41,6 +73,11 @@ class App extends Component {
     this.setState({ order: o });
   }
   
+  emptyOrders = () => {
+    this.state.order.emptyOrders();
+    this.forceUpdate();
+}
+
   render() {
     return (
       <React.Fragment>
@@ -49,7 +86,18 @@ class App extends Component {
           <p>Here you can order custom made salads!</p>
         </div>
         <Container fluid>
-          <ComposeSaladModal inventory={this.state.inventory} submitSalad={this.outputSalad} />
+          <Container >
+          <Row>
+            <Col>
+            <ComposeSaladModal inventory={this.state.inventory} submitSalad={this.outputSalad} />
+            </Col>
+            <Col>
+            <Button variant="primary" onClick={this.emptyOrders}>
+          Töm lista
+          </Button>
+            </Col>
+          </Row>
+          </Container>
           <ViewOrder order={this.state.order} />
         </Container>
         </React.Fragment>

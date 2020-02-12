@@ -38,41 +38,51 @@ class ComposeSalad extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      salad: new Salad()
+      salad: new Salad(),
+      inventory : props.inventory
     };
   }
 
   updateFoundation = e => {
-    const value = e.target.value;
+    const name = e.target.value;
+    const item = this.state.inventory[name];
     var s = this.state.salad;
-    s.addFoundation(value);
-    this.setState({ salad: s });
+    s.addFoundation(name, item);
+    var newState = {salad: s, inventory: this.state.inventory};
+    this.setState(newState);
   }
 
   updateProteins = e => {
     const { name, checked } = e.target;
     var s = this.state.salad;
-    checked ? s.addProtein(name) : s.removeProtein(name);
-    this.setState({ salad: s });
+    const item = this.state.inventory[name];
+    checked ? s.addProtein(name, item) : s.removeProtein(name);
+    var newState = {salad: s, inventory: this.state.inventory};
+    this.setState(newState);
   }
 
   updateExtras = e => {
     const { name, checked } = e.target;
     var s = this.state.salad;
-    checked ? s.addExtra(name) : s.removeExtra(name);
-    this.setState({ salad: s });
+    const item = this.state.inventory[name];
+    checked ? s.addExtra(name, item) : s.removeExtra(name);
+    var newState = {salad: s, inventory: this.state.inventory};
+    this.setState(newState);
   }
 
   updateDressing = e => {
-    const value = e.target.value;
+    const name = e.target.value;
     var s = this.state.salad;
-    s.addDressing(value);
-    this.setState({ salad: s });
+    const item = this.state.inventory[name];
+    s.addDressing(name, item);
+    var newState = {salad: s, inventory: this.state.inventory};
+    this.setState(newState);
   }
 
   handleSubmit = e => {
     e.preventDefault();
-    this.setState({ salad: new Salad() });
+    var newState = {salad: new Salad(), inventory: this.state.inventory};
+    this.setState(newState);
     this.props.handleSubmit(this.state.salad);
     
   }
