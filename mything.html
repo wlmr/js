@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en-US">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Today's Date</title>
+    <script>
+
+        const backendServer = "http://localhost:8080/";
+
+        async function fetchData(url) {
+        let response = await fetch(url);
+        return response;
+        }
+
+        async function getTopics() {
+            let res = types.map(x => fetchData(backendServer + x + "s"));
+            return res;
+        }
+
+        async function getUrls() {
+
+            async function getItemUrls(response) {
+                let url = response.url;
+                let jsonItems = await textToJson(response);
+                return jsonItems.map(x => url + "/" + x);
+            }
+
+            let types = ['foundation', 'protein', 'extra', 'dressing'];
+            let urls = types.map(x => backendServer + x + "s")
+            let topicResponses = await Promise.all(urls.map(x => fetchData(x)));
+            let ingredientUrls = await Promise.all(topicResponses.map(resp => getItemUrls(resp)));
+            let merged = [].concat.apply([], ingredientUrls);
+            return merged;
+            
+        }
+
+        async function getIngredientUrls() {
+            let urls = await getUrls();
+            let responses = await Promise.all(urls.map(x => fetchData(x)));
+            return responses.map(x => x.url);
+        }
+
+        async function getInventory() {
+
+            function nameFromUrl(url) {
+                let name = url.split("/");
+                return last(name);
+            }
+
+            let urls = await getIngredientUrls();
+            let ingredientData = await Promise.all(urls.map(x => fetchData(x)));
+            
+
+
+            
+
+            let inventory = ingredientData.reduce(function(obj, itm) {
+                let current = nameFromUrl(itm.url);
+                obj[current] = textToJson(itm);
+                return obj;
+            }, {});
+
+            return inventory;
+        }
+
+        function last(array) {
+            return array[array.length - 1];
+        }
+
+        async function textToJson(response) {
+            let json = await response.text();
+            return JSON.parse(json);
+        }
+
+        getInventory().then(x => console.log(x));
+    </script>
+</head>
+
+<body>
+
+</body>
+
+
+
+</html>
