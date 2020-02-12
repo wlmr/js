@@ -3,6 +3,8 @@ import ComposeSalad from "./ComposeSalad";
 import Modal from 'react-bootstrap/Modal';
 import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
+import buildInventory from './Inventory.js'
+
 
 
 
@@ -11,11 +13,31 @@ class ComposeSaladModal extends Component {
     super(props);
     this.state = {
       show: false,
+      inventoryFetched: false
     };
   }
 
-  handleClose = () => this.setState({ show: false });
-  handleShow = () => this.setState({ show: true });
+  componentDidMount() {
+    var postFetch = () => {
+      let newState = {show: false, inventoryFetched: true};
+      this.setState(newState);
+      console.log("Finished fetching inventory!");
+    };
+    buildInventory(this.props.inventory, postFetch);
+  }
+
+
+  handleClose = () => {
+    let newState = this.state;
+    newState.show = false;
+    this.setState(newState);
+  };
+
+  handleShow = () => {
+    if(this.state.inventoryFetched) {
+      this.setState({ show: true, inventoryFetched: true });
+    }
+  };
 
   handleSubmit = s => {
     this.handleClose();
