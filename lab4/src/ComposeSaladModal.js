@@ -12,8 +12,8 @@ import Container from 'react-bootstrap/Container';
 const backendServer = "http://localhost:8080/";
 
 async function fetchData(url) {
-let response = await fetch(url);
-return response;
+  let response = await fetch(url);
+  return response;
 }
 
 
